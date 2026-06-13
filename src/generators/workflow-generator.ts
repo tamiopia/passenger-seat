@@ -86,6 +86,9 @@ export async function generateWorkflow(options: ConfigOptions) {
           server: \${{ secrets.FTP_SERVER }}
           username: \${{ secrets.FTP_USERNAME }}
           password: \${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          port: 21
+          timeout: 300000
           local-dir: ./${artifactPath}
           server-dir: ${options.remotePath.endsWith('/') ? options.remotePath : options.remotePath + '/'}
           dangerous-clean-slate: false
