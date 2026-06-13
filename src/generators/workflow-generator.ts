@@ -19,11 +19,11 @@ export async function generateWorkflow(options: ConfigOptions) {
       - name: Install Dependencies
         run: npm ci
 
-      - name: Build Passenger-Seat Bundle
-        run: npx passenger-seat build
-
       - name: Build Next.js
         run: npm run build
+
+      - name: Build Passenger-Seat Bundle
+        run: passenger-seat build
 `;
   } else if (options.framework === 'nextjs-static') {
     buildSteps = `
@@ -34,7 +34,7 @@ export async function generateWorkflow(options: ConfigOptions) {
         run: npm run build
 
       - name: Build Passenger-Seat Bundle
-        run: npx passenger-seat build
+        run: passenger-seat build
 `;
   } else if (options.framework === 'react-vite') {
     buildSteps = `
@@ -43,9 +43,11 @@ export async function generateWorkflow(options: ConfigOptions) {
 
       - name: Build React App
         run: npm run build
+        env:
+          CI: false
 
       - name: Build Passenger-Seat Bundle
-        run: npx passenger-seat build
+        run: passenger-seat build
 `;
   } else if (options.framework === 'node-express') {
     buildSteps = `
@@ -53,7 +55,7 @@ export async function generateWorkflow(options: ConfigOptions) {
         run: npm ci
 
       - name: Build Passenger-Seat Bundle
-        run: npx passenger-seat build
+        run: passenger-seat build
 `;
   }
 
@@ -118,6 +120,9 @@ jobs:
         with:
           node-version: '${options.nodeVersion}'
           cache: 'npm'
+
+      - name: Install passenger-seat
+        run: npm install -g github:tamiopia/passenger-seat
 ${buildSteps}${ftpRestartPrep}${deployStep}`;
 
   fs.writeFileSync(workflowPath, workflowContent, 'utf-8');
